@@ -25,6 +25,7 @@ namespace PigLatinGenerator
                 Console.WriteLine(pigLatin);
 
                 //Continue program?
+                Console.WriteLine("\nTranslate another line? (y/n):");
                 run = Continue();
             }
         }
@@ -43,77 +44,89 @@ namespace PigLatinGenerator
             foreach (string englishWord in englishSentence)
             {
                 wordNum++;
-                string currentWord = englishWord.ToLower();
-                string translatedWord = "";
-                bool isAllCaps = CheckIfAllCaps(englishWord);
-                bool firstLetterIsCaps = false;
 
-                //Check if first letter in word is capitalized (only if word is not all caps!)
-                if (isAllCaps == false && englishWord[0].Equals(englishWord.ToUpper()[0]))
+                //If word contains numbers or special symbols, don't translate.
+                bool hasNonLetters = CheckIfNumbersOrSymbols(englishWord);
+                if (hasNonLetters == true)
                 {
-                    firstLetterIsCaps = true;
-                }
-
-                //If first character is a vowel, add "way" onto ending
-                if (currentWord[0].Equals('a') || currentWord[0].Equals('e') || currentWord[0].Equals('i') || currentWord[0].Equals('o') || currentWord[0].Equals('u'))
-                {
-                    translatedWord += (currentWord + "way");
-
-                    if (isAllCaps == true)
-                    {
-                        translatedSentence = translatedSentence.ToUpper();
-                    }
-                    else if (firstLetterIsCaps == true)
-                    {
-                        translatedWord = translatedWord.Substring(0, 1).ToUpper() + translatedWord.Substring(1);
-                    }
-
-                    translatedSentence += translatedWord;
+                    translatedSentence += englishWord;
                 }
                 else
                 {
-                    //If first character is a consonant, move all consonants before the first vowel to the end of the word, then add "ay" to the end of the word
-                    
-                    string consonantsBeforeFirstVowel = "";
-                    bool reachedVowel = false;    
+                    string currentWord = englishWord.ToLower();
+                    string translatedWord = "";
+                    bool isAllCaps = CheckIfAllCaps(englishWord);
+                    bool firstLetterIsCaps = false;
 
-                    for (int i = 0; i < currentWord.Length; i++)
+                    //Check if first letter in word is capitalized (only if word is not all caps!)
+                    if (isAllCaps == false && englishWord[0].Equals(englishWord.ToUpper()[0]))
                     {
-                        
-                        //First vowel reached
-                        if (currentWord[i].Equals('a') || currentWord[i].Equals('e') || currentWord[i].Equals('i') || currentWord[i].Equals('o') || currentWord[i].Equals('u'))
-                        {
-                            reachedVowel = true;
-                        }
-                       
-                        //Get consonants before first vowel in word
-                        if (reachedVowel == false)
-                        {
-                            consonantsBeforeFirstVowel += currentWord[i];
-                        }
-                        //Get characters from first vowel onwards
-                        else
-                        {
-                            translatedWord += currentWord[i];
-                        }
+                        firstLetterIsCaps = true;
                     }
 
-                    //Add consonants before first vowel to the end of the word, add "ay", then add the final translated word to the translated sentence.
-                    translatedWord += (consonantsBeforeFirstVowel + "ay");
-
-                    //Recapitalize word if original word was all caps
-                    if (isAllCaps == true)
+                    //If first character is a vowel, add "way" onto ending
+                    if (currentWord[0].Equals('a') || currentWord[0].Equals('e') || currentWord[0].Equals('i') || currentWord[0].Equals('o') || currentWord[0].Equals('u'))
                     {
-                        translatedWord = translatedWord.ToUpper();
+                        translatedWord += (currentWord + "way");
+
+                        if (isAllCaps == true)
+                        {
+                            translatedWord = translatedWord.ToUpper();
+                        }
+                        else if (firstLetterIsCaps == true)
+                        {
+                            translatedWord = translatedWord.Substring(0, 1).ToUpper() + translatedWord.Substring(1);
+                        }
+
+                        translatedSentence += translatedWord;
                     }
-                    //Capitalize first letter if original word's first letter was capitalized
-                    else if (firstLetterIsCaps == true)
+                    else
                     {
-                        translatedWord = translatedWord.Substring(0, 1).ToUpper() + translatedWord.Substring(1);
-                    }                   
+                        //If first character is a consonant, move all consonants before the first vowel to the end of the word, then add "ay" to the end of the word
 
-                    translatedSentence += translatedWord;
+                        string consonantsBeforeFirstVowel = "";
+                        bool reachedVowel = false;
+
+                        for (int i = 0; i < currentWord.Length; i++)
+                        {
+
+                            //First vowel reached
+                            if (currentWord[i].Equals('a') || currentWord[i].Equals('e') || currentWord[i].Equals('i') || currentWord[i].Equals('o') || currentWord[i].Equals('u'))
+                            {
+                                reachedVowel = true;
+                            }
+
+                            //Get consonants before first vowel in word
+                            if (reachedVowel == false)
+                            {
+                                consonantsBeforeFirstVowel += currentWord[i];
+                            }
+                            //Get characters from first vowel onwards
+                            else
+                            {
+                                translatedWord += currentWord[i];
+                            }
+                        }
+
+                        //Add consonants before first vowel to the end of the word, add "ay", then add the final translated word to the translated sentence.
+                        translatedWord += (consonantsBeforeFirstVowel + "ay");
+
+                        //Recapitalize word if original word was all caps
+                        if (isAllCaps == true)
+                        {
+                            translatedWord = translatedWord.ToUpper();
+                        }
+                        //Capitalize first letter if original word's first letter was capitalized
+                        else if (firstLetterIsCaps == true)
+                        {
+                            translatedWord = translatedWord.Substring(0, 1).ToUpper() + translatedWord.Substring(1);
+                        }
+
+                        translatedSentence += translatedWord;
+                    }
                 }
+
+                
 
                 //Add a space between translated words
                 if (englishSentence.Length > wordNum)
@@ -139,7 +152,7 @@ namespace PigLatinGenerator
                 }
             }
 
-            //Check if number of capital letters equals total letters in word
+            //If number of capital letters equals total letters in word, return true
             if (capitalLetters == word.Length)
             {
                 return true;
@@ -150,12 +163,26 @@ namespace PigLatinGenerator
             }
         }
 
+        //Check if the word contains numbers or special symbols
+        public static bool CheckIfNumbersOrSymbols(string word)
+        {
+            string nonLetters = "0123456789@#$%^&*()-=_+[]{}/|<>~`;:" + "\"";
+            char[] nonLettersArray = nonLetters.ToCharArray();
 
+            //Return false if no numbers or special characters are in word. IndexOfAny will return "-1" in this case.
+            if (word.IndexOfAny(nonLettersArray) == -1)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
 
         //Continue program?
         public static bool Continue()
         {
-            Console.WriteLine("Translate another line? (y/n):");
             string input = Console.ReadLine().ToLower();
             bool run = false;
 
