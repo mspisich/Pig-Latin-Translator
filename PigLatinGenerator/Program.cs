@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PigLatinGenerator
 {
@@ -89,7 +85,6 @@ namespace PigLatinGenerator
 
                         for (int i = 0; i < currentWord.Length; i++)
                         {
-
                             //First vowel reached
                             if (currentWord[i].Equals('a') || currentWord[i].Equals('e') || currentWord[i].Equals('i') || currentWord[i].Equals('o') || currentWord[i].Equals('u'))
                             {
@@ -126,8 +121,6 @@ namespace PigLatinGenerator
                     }
                 }
 
-                
-
                 //Add a space between translated words
                 if (englishSentence.Length > wordNum)
                 {
@@ -137,7 +130,6 @@ namespace PigLatinGenerator
 
             return translatedSentence;
         }
-
 
         //Is the whole word capitalized?
         public static bool CheckIfAllCaps(string word)
