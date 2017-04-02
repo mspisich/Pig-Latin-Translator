@@ -18,7 +18,7 @@ namespace PigLatinGenerator
             {
                 //User input
                 Console.WriteLine("\nEnter a line to be translated:");
-                string input = Console.ReadLine().ToLower();
+                string input = Console.ReadLine();
 
                 //Translate to Pig Latin and print to screen
                 string pigLatin = Translate(input);
@@ -40,30 +40,52 @@ namespace PigLatinGenerator
             //Track current word being worked on
             int wordNum = 0;
 
-            foreach (string currentWord in englishSentence)
+            foreach (string englishWord in englishSentence)
             {
                 wordNum++;
+                string currentWord = englishWord.ToLower();
+                string translatedWord = "";
+                bool isAllCaps = CheckIfAllCaps(englishWord);
+                bool firstLetterIsCaps = false;
+
+                //Check if first letter in word is capitalized (only if word is not all caps!)
+                if (isAllCaps == false && englishWord[0].Equals(englishWord.ToUpper()[0]))
+                {
+                    firstLetterIsCaps = true;
+                }
 
                 //If first character is a vowel, add "way" onto ending
                 if (currentWord[0].Equals('a') || currentWord[0].Equals('e') || currentWord[0].Equals('i') || currentWord[0].Equals('o') || currentWord[0].Equals('u'))
                 {
-                    translatedSentence += (currentWord + "way");
+                    translatedWord += (currentWord + "way");
+
+                    if (isAllCaps == true)
+                    {
+                        translatedSentence = translatedSentence.ToUpper();
+                    }
+                    else if (firstLetterIsCaps == true)
+                    {
+                        translatedWord = translatedWord.Substring(0, 1).ToUpper() + translatedWord.Substring(1);
+                    }
+
+                    translatedSentence += translatedWord;
                 }
                 else
                 {
                     //If first character is a consonant, move all consonants before the first vowel to the end of the word, then add "ay" to the end of the word
-                    string translatedWord = "";
+                    
                     string consonantsBeforeFirstVowel = "";
-                    bool reachedVowel = false;
+                    bool reachedVowel = false;    
 
-                    for (int i = 0; i <= (currentWord.Length - 1); i++)
+                    for (int i = 0; i < currentWord.Length; i++)
                     {
+                        
                         //First vowel reached
                         if (currentWord[i].Equals('a') || currentWord[i].Equals('e') || currentWord[i].Equals('i') || currentWord[i].Equals('o') || currentWord[i].Equals('u'))
                         {
                             reachedVowel = true;
                         }
-
+                       
                         //Get consonants before first vowel in word
                         if (reachedVowel == false)
                         {
@@ -76,8 +98,20 @@ namespace PigLatinGenerator
                         }
                     }
 
-                    translatedWord += consonantsBeforeFirstVowel;
-                    translatedWord += "ay";
+                    //Add consonants before first vowel to the end of the word, add "ay", then add the final translated word to the translated sentence.
+                    translatedWord += (consonantsBeforeFirstVowel + "ay");
+
+                    //Recapitalize word if original word was all caps
+                    if (isAllCaps == true)
+                    {
+                        translatedWord = translatedWord.ToUpper();
+                    }
+                    //Capitalize first letter if original word's first letter was capitalized
+                    else if (firstLetterIsCaps == true)
+                    {
+                        translatedWord = translatedWord.Substring(0, 1).ToUpper() + translatedWord.Substring(1);
+                    }                   
+
                     translatedSentence += translatedWord;
                 }
 
@@ -91,6 +125,33 @@ namespace PigLatinGenerator
             return translatedSentence;
         }
 
+
+        //Is the whole word capitalized?
+        public static bool CheckIfAllCaps(string word)
+        {
+            //Count number of capital letters
+            int capitalLetters = 0;
+            for (int i = 0; i < word.Length; i++)
+            {
+                if (word[i].Equals(word.ToUpper()[i]))
+                {
+                    capitalLetters++;
+                }
+            }
+
+            //Check if number of capital letters equals total letters in word
+            if (capitalLetters == word.Length)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+
+
         //Continue program?
         public static bool Continue()
         {
@@ -98,12 +159,12 @@ namespace PigLatinGenerator
             string input = Console.ReadLine().ToLower();
             bool run = false;
 
-            if (input == "n")
+            if (input.Equals("n"))
             {
                 Console.WriteLine("Bye!");
                 run = false;
             }
-            else if (input == "y")
+            else if (input.Equals("y"))
             {
                 run = true;
             }
